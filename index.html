@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DY's Day ⭐</title>
+<meta name="description" content="A picture checklist to help me do my routines by myself.">
+<meta name="theme-color" content="#ffb3d1">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   DY'S DAY  —  kawaii picture checklist + grown-up weekly report
+   Single file. No installs. Change everything from the ⚙️ button.
+   Built on a task-analysis model: each routine is a chain of small steps,
+   the child self-monitors, and the app quietly timestamps each check so the
+   weekly report can show duration and consistency without extra taps.
+   ========================================================================== */
+
+:root{
+  --ink:       #4a2d52;   /* deep plum — reads clearly on every pastel here */
+  --ink-soft:  #8a6d94;
+  --paper:     #fff6fa;
+  --card:      #ffffff;
+  --line:      #f0d9e6;
+
+  /* routine palettes */
+  --morning:      #ff8fc0;  --morning-bg:  #ffe3f0;  --morning-deep:  #e0559a;
+  --bedtime:      #9b8ff0;  --bedtime-bg:  #ebe6ff;  --bedtime-deep:  #6b58d6;
+  --after:        #57c4a8;  --after-bg:    #ddf6ef;  --after-deep:    #2f9a7e;
+  --calm:         #f0a860;  --calm-bg:     #ffeeda;  --calm-deep:     #cf7d2c;
+
+  --accent:      var(--morning);
+  --accent-bg:   var(--morning-bg);
+  --accent-deep: var(--morning-deep);
+
+  --r: 26px;
+  --shadow:  0 4px 0 var(--line), 0 10px 26px rgba(120,60,110,.10);
+  --shadow-a:0 4px 0 var(--accent-deep), 0 10px 26px rgba(120,60,110,.16);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:"Nunito","Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  font-weight:700;
+  background:
+    radial-gradient(circle at 12% 8%,  #fff0d6 0 12px, transparent 13px),
+    radial-gradient(circle at 88% 22%, #dff3ff 0 10px, transparent 11px),
+    radial-gradient(circle at 22% 60%, #e8e0ff 0 8px,  transparent 9px),
+    radial-gradient(circle at 78% 82%, #d9f7ea 0 12px, transparent 13px),
+    var(--paper);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-size:20px;line-height:1.4;
+  padding-bottom:50px;
+}
+h1,h2,h3,.tab,.big-num{font-family:"Baloo 2","Nunito",system-ui,sans-serif}
+:focus-visible{outline:5px solid #2f6fd0;outline-offset:3px;border-radius:12px}
+.wrap{max-width:880px;margin:0 auto;padding:0 16px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------------- header ---------------- */
+header{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-deep) 100%);
+  color:#fff;padding:16px 0 20px;
+  border-bottom-left-radius:34px;border-bottom-right-radius:34px;
+  box-shadow:0 8px 24px rgba(120,60,110,.18);
+  transition:background .4s ease;
+}
+.hrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-size:1.55rem;margin:0;flex:1 1 auto;text-shadow:0 2px 0 rgba(0,0,0,.10)}
+.pill{
+  font:inherit;font-size:.92rem;font-weight:800;
+  background:rgba(255,255,255,.22);color:#fff;
+  border:3px solid rgba(255,255,255,.6);border-radius:999px;
+  padding:9px 16px;min-height:48px;cursor:pointer;white-space:nowrap;
+}
+.pill:hover{background:rgba(255,255,255,.36)}
+.pill.solid{background:#fff;color:var(--accent-deep);border-color:#fff}
+
+/* ---------------- tabs ---------------- */
+nav.tabs{display:flex;gap:10px;margin:18px 0 0;flex-wrap:wrap}
+.tab{
+  flex:1 1 165px;display:flex;flex-direction:column;align-items:center;gap:2px;
+  min-height:96px;justify-content:center;
+  font-size:1rem;font-weight:800;
+  background:var(--card);color:var(--ink);
+  border:4px solid var(--line);border-radius:var(--r);
+  padding:10px;cursor:pointer;box-shadow:var(--shadow);
+  transition:transform .18s cubic-bezier(.3,1.5,.5,1),background .2s;
+}
+.tab .em{font-size:2.1rem;line-height:1}
+.tab:hover{transform:translateY(-3px)}
+.tab[aria-selected="true"]{
+  background:var(--accent-bg);border-color:var(--accent);
+  transform:translateY(-3px) scale(1.02);
+}
+.tab .mini{font-size:.72rem;font-weight:700;color:var(--ink-soft)}
+.tab[aria-selected="true"] .mini{color:var(--accent-deep)}
+
+/* ---------------- feeling scale ---------------- */
+.feel-card{
+  background:var(--card);border:4px solid var(--line);border-radius:var(--r);
+  padding:16px;margin:18px 0;box-shadow:var(--shadow);
+}
+.feel-card h2{margin:0 0 4px;font-size:1.3rem}
+.feel-card .sub{font-size:.9rem;color:var(--ink-soft);font-weight:700;margin:0 0 12px}
+.faces{display:flex;gap:8px;flex-wrap:wrap}
+.face{
+  flex:1 1 92px;min-height:112px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  font:inherit;font-size:.85rem;font-weight:800;color:var(--ink);
+  background:var(--paper);border:4px solid var(--line);border-radius:22px;
+  cursor:pointer;padding:8px 4px;
+  transition:transform .18s cubic-bezier(.3,1.6,.5,1);
+}
+.face .em{font-size:2.7rem;line-height:1}
+.face:hover{transform:translateY(-4px) rotate(-3deg)}
+.face[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-bg);transform:scale(1.06)}
+.feel-chip{
+  display:flex;align-items:center;gap:12px;width:100%;
+  font:inherit;font-size:1.05rem;font-weight:800;color:var(--ink);
+  background:var(--accent-bg);border:4px solid var(--accent);border-radius:22px;
+  padding:12px 16px;min-height:72px;cursor:pointer;text-align:left;
+}
+.feel-chip .em{font-size:2.4rem;line-height:1}
+.feel-chip .chg{margin-left:auto;font-size:.8rem;font-weight:700;color:var(--accent-deep)}
+
+/* ---------------- mascot + progress ---------------- */
+.prog-card{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:var(--card);border:4px solid var(--line);border-radius:var(--r);
+  padding:16px;margin:16px 0;box-shadow:var(--shadow);
+}
+#mascot{flex:0 0 auto;width:88px;height:88px}
+.prog-body{flex:1 1 240px;min-width:0}
+.prog-top{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.prog-top strong{font-size:1.15rem}
+.big-num{margin-left:auto;font-size:1.5rem;font-weight:800;color:var(--accent-deep)}
+.bar{height:28px;background:var(--accent-bg);border-radius:999px;border:4px solid var(--line);overflow:hidden}
+.bar-fill{height:100%;width:0;border-radius:999px;transition:width .5s cubic-bezier(.34,1.5,.5,1);
+  background:repeating-linear-gradient(115deg,var(--accent) 0 14px,var(--accent-deep) 14px 28px)}
+.stars{margin-top:8px;font-size:1.5rem;letter-spacing:5px;line-height:1}
+.star{opacity:.2;display:inline-block;transition:opacity .3s,transform .3s}
+.star.on{opacity:1;transform:scale(1.2) rotate(-8deg)}
+
+/* ---------------- checklist ---------------- */
+ul.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+li.item{
+  display:flex;align-items:stretch;
+  background:var(--card);border:4px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);overflow:hidden;
+  transition:border-color .2s,background .2s,transform .18s;
+}
+li.item.done{background:var(--accent-bg);border-color:var(--accent);box-shadow:var(--shadow-a)}
+li.item.pop{animation:pop .42s cubic-bezier(.3,1.7,.5,1)}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.045) rotate(-.6deg)}100%{transform:scale(1)}}
+
+.check-btn{
+  flex:1 1 auto;display:flex;align-items:center;gap:14px;
+  min-height:104px;padding:12px 14px;
+  font:inherit;text-align:left;background:transparent;border:0;cursor:pointer;color:inherit;
+}
+.num{
+  flex:0 0 auto;width:38px;height:38px;border-radius:50%;
+  background:var(--accent-bg);color:var(--accent-deep);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.05rem;font-weight:800;border:3px solid var(--accent);
+}
+li.item.done .num{background:var(--accent);color:#fff}
+.icon{font-size:3.1rem;line-height:1;flex:0 0 auto;width:64px;text-align:center}
+.txt{flex:1 1 auto;font-size:1.15rem;font-weight:800}
+li.item.done .txt{color:var(--ink-soft)}
+.box{
+  flex:0 0 auto;width:58px;height:58px;border-radius:20px;
+  border:5px solid var(--accent);background:#fff;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:2rem;
+}
+li.item.done .box{background:var(--accent)}
+li.item.done .box::after{content:"✓"}
+.speak{
+  flex:0 0 auto;width:76px;font-size:2rem;
+  background:var(--accent-bg);color:var(--accent-deep);
+  border:0;border-left:4px solid var(--line);cursor:pointer;
+}
+.speak:hover{filter:brightness(.95)}
+.speak.on{background:var(--accent);color:#fff}
+
+/* ---------------- action buttons ---------------- */
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin:22px 0 0}
+.btn{
+  flex:1 1 190px;min-height:64px;
+  font:inherit;font-size:1rem;font-weight:800;
+  background:var(--card);color:var(--ink);
+  border:4px solid var(--line);border-radius:var(--r);
+  padding:12px 16px;cursor:pointer;box-shadow:var(--shadow);
+}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent-deep);box-shadow:var(--shadow-a)}
+
+/* ---------------- celebration ---------------- */
+#yay{position:fixed;inset:0;display:none;place-items:center;background:rgba(74,45,82,.55);z-index:60;padding:20px}
+#yay.show{display:grid}
+.yay-card{
+  background:var(--card);border:6px solid var(--accent);border-radius:34px;
+  padding:30px 26px;text-align:center;max-width:430px;
+  box-shadow:0 24px 60px rgba(74,45,82,.4);
+  animation:bounceIn .55s cubic-bezier(.3,1.7,.5,1);
+}
+@keyframes bounceIn{0%{transform:scale(.6) rotate(-6deg);opacity:0}100%{transform:scale(1);opacity:1}}
+.yay-card .big{font-size:4.6rem;line-height:1;display:block;animation:wiggle 1.1s ease-in-out infinite}
+@keyframes wiggle{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+.yay-card h2{margin:.15em 0;font-size:1.75rem;color:var(--accent-deep)}
+.yay-card p{margin:.3em 0 1.2em;color:var(--ink-soft);font-weight:700}
+.confetti{position:fixed;top:-26px;z-index:59;pointer-events:none;font-size:1.5rem}
+@keyframes fall{to{transform:translateY(112vh) rotate(760deg);opacity:.85}}
+
+/* ---------------- modals ---------------- */
+.modal{position:fixed;inset:0;background:rgba(74,45,82,.6);z-index:70;display:none;overflow:auto;padding:18px}
+.modal.show{display:block}
+.panel{
+  background:var(--card);max-width:880px;margin:0 auto;
+  border-radius:30px;padding:22px;box-shadow:0 24px 60px rgba(74,45,82,.4);
+}
+.panel h2{margin:0 0 2px;font-size:1.45rem}
+.panel h3{font-size:1.1rem;margin:24px 0 8px;padding-top:16px;border-top:3px solid var(--line)}
+.hint{font-size:.88rem;color:var(--ink-soft);font-weight:700;margin:.2em 0 1em}
+.erow{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.erow input{font:inherit;font-weight:700;padding:10px;border:3px solid var(--line);border-radius:14px;min-height:50px}
+.erow input.ic{width:74px;text-align:center;font-size:1.5rem}
+.erow input.tx{flex:1 1 auto;font-size:1rem;min-width:0}
+.mini{font:inherit;font-weight:800;min-width:50px;min-height:50px;border:3px solid var(--line);
+  border-radius:14px;background:var(--paper);cursor:pointer;padding:0 10px;color:var(--ink)}
+.mini:hover{border-color:var(--accent)}
+.mini.danger{color:#b03050;border-color:#f2c4d2}
+select.sel,textarea.ta{font:inherit;font-weight:700;padding:10px;border:3px solid var(--line);border-radius:14px;min-height:50px;width:100%;max-width:400px;color:var(--ink);background:#fff}
+textarea.ta{max-width:100%;min-height:90px}
+.prow{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;padding-top:16px;border-top:3px solid var(--line)}
+
+/* ---------------- weekly report ---------------- */
+.rpt-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.rpt-head h2{flex:1 1 auto}
+.wk{display:flex;align-items:center;gap:8px;margin:14px 0 18px;flex-wrap:wrap}
+.wk .range{font-weight:800;font-size:1.02rem}
+
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.kpi{
+  flex:1 1 150px;background:var(--paper);border:3px solid var(--line);
+  border-radius:20px;padding:14px;text-align:center;
+}
+.kpi .v{font-family:"Baloo 2",sans-serif;font-size:1.9rem;font-weight:800;color:var(--accent-deep);line-height:1.1}
+.kpi .l{font-size:.78rem;color:var(--ink-soft);font-weight:700;margin-top:2px}
+
+.chart{display:flex;gap:6px;align-items:flex-end;height:170px;
+  border-bottom:3px solid var(--line);padding-bottom:2px;margin-bottom:6px}
+.col{flex:1 1 0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:4px}
+.col .cv{font-size:.72rem;font-weight:800;color:var(--ink-soft)}
+.col .cb{width:100%;max-width:56px;border-radius:12px 12px 0 0;background:var(--accent);min-height:4px;
+  transition:height .4s ease;border:2px solid var(--accent-deep);border-bottom:0}
+.col.empty .cb{background:var(--line);border-color:var(--line)}
+.axis{display:flex;gap:6px;margin-bottom:20px}
+.axis div{flex:1 1 0;text-align:center;font-size:.8rem;font-weight:800}
+.axis .mood{font-size:1.35rem;line-height:1.2;display:block}
+.axis .dow{color:var(--ink-soft);font-size:.72rem}
+
+table.steps{width:100%;border-collapse:collapse;font-size:.92rem}
+table.steps th,table.steps td{padding:9px 6px;text-align:left;border-bottom:2px solid var(--line);vertical-align:middle}
+table.steps th{font-size:.76rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.5px}
+table.steps td.dots{white-space:nowrap;text-align:center;font-size:1.05rem;letter-spacing:1px}
+table.steps td.pct{text-align:right;font-weight:800;width:64px}
+table.steps tr.focus{background:#fff4e0}
+table.steps tr.focus td:first-child::after{content:" ⚠️"}
+.legend{font-size:.8rem;color:var(--ink-soft);font-weight:700;margin-top:10px}
+.callout{background:var(--accent-bg);border:3px solid var(--accent);border-radius:20px;padding:14px 16px;margin:18px 0;font-size:.95rem}
+.callout b{color:var(--accent-deep)}
+.callout ul{margin:.5em 0 0;padding-left:1.2em}
+.callout li{margin:.3em 0}
+
+/* ---------------- print (the grown-up report) ---------------- */
+@media print{
+  @page{margin:14mm}
+  body{background:#fff !important;font-size:11pt;padding:0}
+  header,nav.tabs,.actions,.feel-card,.prog-card,ul.list,#yay,#settings,.noprint{display:none !important}
+  .modal{position:static !important;background:none !important;padding:0 !important;display:block !important;overflow:visible}
+  .modal:not(.show){display:none !important}
+  .panel{box-shadow:none;border-radius:0;padding:0;max-width:100%}
+  .kpi,.callout,table.steps tr{break-inside:avoid}
+  .chart .cb{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .kpi .v,.col .cb,tr.focus{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .print-only{display:block !important}
+}
+.print-only{display:none;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid var(--line)}
+
+/* ---------------- responsive ---------------- */
+@media (max-width:600px){
+  body{font-size:18px}
+  h1{font-size:1.3rem;flex-basis:100%}
+  .icon{font-size:2.5rem;width:52px}
+  .txt{font-size:1.02rem}
+  .num{width:32px;height:32px;font-size:.92rem}
+  .box{width:50px;height:50px;font-size:1.7rem}
+  .speak{width:64px;font-size:1.7rem}
+  .tab{flex-basis:calc(50% - 5px)}
+  .face{flex-basis:calc(33.33% - 6px)}
+  table.steps{font-size:.82rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+
+/* ==================== drawn character icons ==================== */
+svg.em,svg.ic-svg,svg.tiny,svg.mood-svg,svg.row-svg{display:block;overflow:visible}
+.tab svg.em{width:48px;height:48px;margin:0 auto}
+.face svg.em{width:58px;height:58px;margin:0 auto}
+.feel-chip svg.em{width:52px;height:52px;flex:0 0 auto}
+.icon{display:flex;align-items:center;justify-content:center}
+.icon svg.ic-svg{width:62px;height:62px}
+svg.tiny{width:26px;height:26px;display:inline-block;vertical-align:-6px}
+svg.mood-svg{width:28px;height:28px;margin:0 auto}
+svg.row-svg{width:26px;height:26px;display:inline-block;vertical-align:-7px;margin-right:2px}
+.emo{font-size:2.6rem;line-height:1}
+.tab .emo{font-size:2rem}
+svg.pick-svg{width:44px;height:44px}
+
+/* the next step to do breathes gently — the schedule cues him, not a person */
+li.item.next{border-color:var(--accent);box-shadow:0 0 0 5px var(--accent-bg),var(--shadow)}
+li.item.next .icon svg{animation:bob 1.9s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+
+/* ==================== check-off celebration ==================== */
+li.item.cheer{animation:squash .62s cubic-bezier(.3,1.5,.5,1)}
+@keyframes squash{
+  0%{transform:scale(1,1)} 18%{transform:scale(1.05,.93)}
+  42%{transform:scale(.97,1.06)} 68%{transform:scale(1.02,.98)} 100%{transform:scale(1,1)}}
+
+li.item.cheer .icon svg{animation:hop .78s cubic-bezier(.3,1.4,.5,1)}
+@keyframes hop{
+  0%{transform:translateY(0) rotate(0) scale(1)}
+  22%{transform:translateY(-20px) rotate(-16deg) scale(1.22)}
+  46%{transform:translateY(0) rotate(11deg) scale(.94)}
+  66%{transform:translateY(-9px) rotate(-6deg) scale(1.08)}
+  84%{transform:translateY(0) rotate(3deg) scale(.98)}
+  100%{transform:translateY(0) rotate(0) scale(1)}}
+
+li.item.cheer .box{animation:stamp .55s cubic-bezier(.25,1.7,.45,1)}
+@keyframes stamp{
+  0%{transform:scale(0) rotate(-60deg)} 55%{transform:scale(1.38) rotate(10deg)}
+  78%{transform:scale(.92) rotate(-4deg)} 100%{transform:scale(1) rotate(0)}}
+
+li.item.cheer .num{animation:spin .6s ease-out}
+@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+#mascot.cheer{animation:cheer .8s cubic-bezier(.3,1.5,.5,1)}
+@keyframes cheer{
+  0%,100%{transform:translateY(0) rotate(0) scale(1)}
+  25%{transform:translateY(-14px) rotate(-13deg) scale(1.14)}
+  55%{transform:translateY(0) rotate(10deg) scale(.96)}
+  78%{transform:translateY(-5px) rotate(-4deg) scale(1.04)}}
+
+.bar-fill.pulse{animation:shine .7s ease-out}
+@keyframes shine{0%{filter:brightness(1)}35%{filter:brightness(1.45) saturate(1.3)}100%{filter:brightness(1)}}
+
+/* effects layer — lives above everything, never clipped by the card */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:55;overflow:hidden}
+.spark{position:absolute;font-size:1.35rem;line-height:1;will-change:transform,opacity;
+  animation:fly .95s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes fly{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(0);opacity:0}
+  18%{opacity:1}
+  35%{transform:translate(calc(-50% + var(--dx)*.55),calc(-50% + var(--dy)*.55)) scale(1.25) rotate(90deg)}
+  100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy) + 26px)) scale(.2) rotate(280deg);opacity:0}}
+.ring{position:absolute;width:64px;height:64px;border-radius:50%;
+  border:5px solid var(--accent);transform:translate(-50%,-50%);
+  animation:ripple .7s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes ripple{0%{transform:translate(-50%,-50%) scale(.35);opacity:.95}
+                  100%{transform:translate(-50%,-50%) scale(2.7);opacity:0}}
+.praise{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;
+  font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.5rem;color:var(--accent-deep);
+  text-shadow:0 3px 0 #fff,0 0 12px rgba(255,255,255,.9);
+  animation:rise 1.15s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes rise{
+  0%{transform:translate(-50%,-50%) scale(.4) rotate(-9deg);opacity:0}
+  22%{transform:translate(-50%,-160%) scale(1.2) rotate(4deg);opacity:1}
+  55%{transform:translate(-50%,-230%) scale(1) rotate(-3deg);opacity:1}
+  100%{transform:translate(-50%,-330%) scale(.85) rotate(2deg);opacity:0}}
+
+@media print{
+  svg.row-svg,svg.mood-svg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #fx{display:none !important}
+}
+@media (max-width:600px){
+  .icon svg.ic-svg{width:50px;height:50px}
+  .tab svg.em{width:40px;height:40px}
+  .face svg.em{width:48px;height:48px}
+  .praise{font-size:1.2rem}
+}
+
+/* ==================== character picker ==================== */
+.icbtn{background:var(--paper);border:3px solid var(--line);border-radius:14px;
+  width:62px;min-height:50px;cursor:pointer;padding:3px;display:flex;
+  align-items:center;justify-content:center;flex:0 0 auto}
+.icbtn:hover{border-color:var(--accent);background:var(--accent-bg)}
+.icbtn .emo{font-size:1.5rem}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-top:12px}
+.pcell{background:var(--paper);border:3px solid var(--line);border-radius:18px;
+  padding:8px 4px;cursor:pointer;font:inherit;font-size:.66rem;font-weight:700;
+  color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;gap:3px}
+.pcell:hover{border-color:var(--accent);background:var(--accent-bg);transform:translateY(-3px)}
+.pcell[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-bg)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hrow">
+    <h1><span aria-hidden="true">⭐</span> <span id="title">DY's Day</span></h1>
+    <button class="pill" id="whoBtn" aria-label="Change who is using this">👤 <span id="whoName">DY</span></button>
+    <button class="pill solid" id="rptBtn">📊 Weekly Report</button>
+    <button class="pill" id="setBtn" aria-label="Grown-up settings">⚙️</button>
+  </div>
+</header>
+
+<div id="fx" aria-hidden="true"></div>
+
+<main class="wrap">
+  <nav class="tabs" role="tablist" aria-label="My routines" id="tabs"></nav>
+
+  <!-- how am I feeling -->
+  <section class="feel-card" id="feelCard"></section>
+
+  <!-- mascot + progress -->
+  <section class="prog-card" aria-live="polite">
+    <svg id="mascot" viewBox="0 0 100 100" role="img" aria-label="A friendly star cheering you on"></svg>
+    <div class="prog-body">
+      <div class="prog-top">
+        <strong id="progTitle">Morning</strong>
+        <span class="big-num" id="progNum">0 / 0</span>
+      </div>
+      <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+      <div class="stars" id="stars" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <ul class="list" id="list"></ul>
+
+  <div class="actions">
+    <button class="btn primary" id="readAll">🔊 Read my list</button>
+    <button class="btn" id="startOver">↺ Start over</button>
+  </div>
+</main>
+
+<!-- celebration -->
+<div id="yay" role="dialog" aria-modal="true" aria-labelledby="yayTitle">
+  <div class="yay-card">
+    <span class="big" aria-hidden="true">🌈</span>
+    <h2 id="yayTitle">You did it!</h2>
+    <p id="yayMsg"></p>
+    <button class="btn primary" id="yayClose">Yay! 🎉</button>
+  </div>
+</div>
+
+<!-- ===================== WEEKLY REPORT ===================== -->
+<div class="modal" id="report" role="dialog" aria-modal="true" aria-labelledby="rptTitle">
+  <div class="panel">
+    <div class="print-only" id="printHead"></div>
+    <div class="rpt-head noprint">
+      <h2 id="rptTitle">📊 Weekly Report</h2>
+      <button class="mini" id="rptClose" aria-label="Close report">✕</button>
+    </div>
+    <p class="hint noprint">For the parent, teacher, doctor, or IEP team. Use <b>Save as PDF</b> in the print dialog to email or bring to an appointment.</p>
+
+    <div class="wk noprint">
+      <button class="mini" id="wkPrev" aria-label="Previous week">←</button>
+      <span class="range" id="wkRange"></span>
+      <button class="mini" id="wkNext" aria-label="Next week">→</button>
+      <select class="sel" id="rptList" style="max-width:230px;margin-left:auto" aria-label="Which routine to report on"></select>
+    </div>
+
+    <div id="rptBody"></div>
+
+    <div class="prow noprint">
+      <button class="btn primary" id="rptPrint">🖨️ Print / Save as PDF</button>
+      <button class="btn" id="rptClose2">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CHARACTER PICKER ===================== -->
+<div class="modal" id="picker" role="dialog" aria-modal="true" aria-labelledby="pickTitle" style="z-index:80">
+  <div class="panel" style="max-width:640px">
+    <div class="rpt-head">
+      <h2 id="pickTitle">Pick a character</h2>
+      <button class="mini" id="pickClose" aria-label="Close picker">&#10005;</button>
+    </div>
+    <div class="erow">
+      <label for="pickCustom" style="flex:0 0 auto;font-size:.9rem">Or type an emoji</label>
+      <input type="text" class="tx" id="pickCustom" maxlength="4" style="max-width:110px;text-align:center;font-size:1.5rem">
+      <button class="mini" id="pickUse">Use it</button>
+    </div>
+    <div class="pgrid" id="pgrid"></div>
+  </div>
+</div>
+
+<!-- ===================== SETTINGS ===================== -->
+<div class="modal" id="settings" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+  <div class="panel">
+    <div class="rpt-head">
+      <h2 id="setTitle">⚙️ Grown-Up Settings</h2>
+      <button class="mini" id="setClose" aria-label="Close settings">✕</button>
+    </div>
+    <p class="hint">Everything saves as you type &mdash; but <b>only in this browser, on this device</b>.
+      Editing here does not change the published website. Once the routines are how you want them, use
+      <b>📤 Save a new index.html to upload</b> at the bottom and drag that file's folder back onto
+      Netlify. That is the step that makes your changes go live for everybody else.</p>
+
+    <h3>Who is using this</h3>
+    <div class="erow">
+      <select class="sel" id="stuSel" aria-label="Current person"></select>
+      <button class="mini" id="stuAdd">➕ Add</button>
+      <button class="mini danger" id="stuDel">✕ Remove</button>
+    </div>
+    <p class="hint">Each person gets their own routines and their own report. New people start with a copy of the standard routines.</p>
+
+    <h3>Edit a routine</h3>
+    <div class="erow">
+      <select class="sel" id="editSel" aria-label="Routine to edit"></select>
+      <button class="mini" id="listAdd" title="Add a new routine">➕ New routine</button>
+    </div>
+    <div class="erow" style="margin-top:10px">
+      <button class="icbtn" id="listEmoji" aria-label="Change the routine character"></button>
+      <input type="text" class="tx" id="listName" aria-label="Routine name">
+      <button class="mini danger" id="listDel" title="Delete this routine">🗑️</button>
+    </div>
+    <div id="rows" style="margin-top:14px"></div>
+    <button class="mini" id="addItem" style="margin-top:8px">➕ Add a step</button>
+    <p class="hint">The small box is the picture — paste any emoji.
+      Try: 🛏️ 🚽 🪥 🧼 👕 🧦 👟 🥣 🎒 🧴 💊 🛁 📚 🧸 😴 🍎 ✏️ 🧹 🎮 🫁 🎧 💧 🚶 🎨 🤗</p>
+
+    <h3>Reading voice</h3>
+    <div class="erow">
+      <label for="rate" style="flex:0 0 auto;font-size:.95rem">Speed</label>
+      <input type="range" id="rate" min="0.5" max="1.2" step="0.05" style="flex:1 1 auto;min-height:50px">
+      <span id="rateVal" style="width:52px;text-align:right">0.90</span>
+      <button class="mini" id="testVoice">▶︎ Test</button>
+    </div>
+
+    <div class="prow">
+      <button class="btn primary" id="setSave">Save &amp; close</button>
+      <button class="btn" id="publishBtn">📤 Save a new index.html to upload</button>
+      <button class="btn" id="restoreBtn">↺ Reset routines to the published version</button>
+      <button class="btn" id="exportBtn">⬇︎ Back up all data</button>
+      <button class="btn" id="importBtn">⬆︎ Restore from a backup</button>
+      <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ==========================================================================
+   KAWAII CHARACTER SET  (working source — gets inlined into index.html)
+   Every icon is a 64×64 SVG with a face: dot eyes, a small smile, blush.
+   Drawn on a shared outline colour so the set reads as one family.
+   ========================================================================== */
+const O = '#5b3a63';
+
+/* face(x, y, spread, kind)
+   kind: '' normal | 'sleep' closed eyes | 'happy' ^^ eyes | 'blow' o-mouth  */
+function face(x, y, w, kind){
+  let eyes;
+  if(kind === 'sleep')
+    eyes = `<path d="M${x-w-3.4} ${y-1} q3.4 3.6 6.8 0 M${x+w-3.4} ${y-1} q3.4 3.6 6.8 0" stroke-width="2.4"/>`;
+  else if(kind === 'happy')
+    eyes = `<path d="M${x-w-3.4} ${y+1.6} q3.4 -4.2 6.8 0 M${x+w-3.4} ${y+1.6} q3.4 -4.2 6.8 0" stroke-width="2.4"/>`;
+  else
+    eyes = `<circle cx="${x-w}" cy="${y}" r="2.5" fill="${O}" stroke="none"/>`+
+           `<circle cx="${x+w}" cy="${y}" r="2.5" fill="${O}" stroke="none"/>`+
+           `<circle cx="${x-w+0.9}" cy="${y-1}" r="0.9" fill="#fff" stroke="none"/>`+
+           `<circle cx="${x+w+0.9}" cy="${y-1}" r="0.9" fill="#fff" stroke="none"/>`;
+  const mouth = kind === 'blow'
+    ? `<ellipse cx="${x}" cy="${y+6.5}" rx="2.7" ry="3.4" fill="${O}" stroke="none"/>`
+    : `<path d="M${x-3.4} ${y+5.2} q3.4 3.6 6.8 0" stroke-width="2.2"/>`;
+  return eyes + mouth +
+    `<ellipse cx="${x-w-4.4}" cy="${y+4}" rx="3.1" ry="2.1" fill="#ff8fbc" stroke="none" opacity=".6"/>`+
+    `<ellipse cx="${x+w+4.4}" cy="${y+4}" rx="3.1" ry="2.1" fill="#ff8fbc" stroke="none" opacity=".6"/>`;
+}
+
+/* palette */
+const C = {
+  pink:'#ffc2dd', rose:'#ff9ec4', mint:'#b8ecd8', green:'#7fd8b8',
+  sky:'#bfe3ff', blue:'#8fcbf5', butter:'#ffe6a8', peach:'#ffd0ae',
+  lilac:'#d9caff', cream:'#fff3e2', white:'#ffffff', tan:'#e8b98d',
+  grey:'#dfe9ef'
+};
+
+const ICONS = {
+
+/* ---------- morning ---------- */
+bed:{n:'Bed', s:
+  `<path d="M6 50 v6 M58 50 v6"/>`+
+  `<rect x="5" y="28" width="54" height="23" rx="7" fill="${C.cream}"/>`+
+  `<rect x="9" y="21" width="21" height="14" rx="7" fill="${C.white}"/>`+
+  `<path d="M5 37 h54 v7 a7 7 0 0 1 -7 7 H12 a7 7 0 0 1 -7 -7 z" fill="${C.sky}"/>`+
+  face(41,43,6.5,'sleep')+
+  `<path d="M46 16 h7 l-7 8 h7" stroke-width="2.2"/>`},
+
+toilet:{n:'Toilet', s:
+  `<rect x="15" y="4" width="30" height="19" rx="5" fill="${C.grey}"/>`+
+  `<path d="M20 40 h20 l5 18 H15 z" fill="${C.white}"/>`+
+  `<rect x="7" y="24" width="46" height="17" rx="8.5" fill="${C.white}"/>`+
+  `<ellipse cx="30" cy="32.5" rx="15" ry="5.5" fill="${C.sky}" stroke-width="2"/>`+
+  face(30,13,6.5)},
+
+soap:{n:'Soap', s:
+  `<circle cx="17" cy="17" r="6.5" fill="${C.sky}"/>`+
+  `<circle cx="32" cy="9" r="4.5" fill="${C.sky}"/>`+
+  `<circle cx="45" cy="16" r="5.5" fill="${C.sky}"/>`+
+  `<rect x="10" y="27" width="44" height="27" rx="10" fill="${C.lilac}"/>`+
+  face(32,39,7)},
+
+toothbrush:{n:'Toothbrush', s:
+  `<rect x="23" y="4" width="18" height="9" rx="3.5" fill="${C.mint}"/>`+
+  `<path d="M28 4 v9 M32 4 v9 M36 4 v9" stroke-width="1.8"/>`+
+  `<rect x="20" y="11" width="24" height="14" rx="6" fill="${C.white}"/>`+
+  `<rect x="24" y="23" width="16" height="35" rx="8" fill="${C.blue}"/>`+
+  face(32,39,6)},
+
+washface:{n:'Water drop', s:
+  `<path d="M32 5 C43 22 51 30 51 39 a19 19 0 0 1 -38 0 C13 30 21 22 32 5 z" fill="${C.sky}"/>`+
+  face(32,38,6.5)},
+
+pajamas:{n:'Pajamas', s:
+  `<path d="M23 13 h18 l13 8 -7 9 -4 -3 v25 a4 4 0 0 1 -4 4 H25 a4 4 0 0 1 -4 -4 V27 l-4 3 -7 -9 z" fill="${C.lilac}"/>`+
+  `<path d="M25 8 a7 7 0 1 0 8 5" stroke-width="2.2" fill="none"/>`+
+  face(32,38,6.5,'sleep')},
+
+clothes:{n:'Shirt', s:
+  `<path d="M23 13 h18 l13 8 -7 9 -4 -3 v25 a4 4 0 0 1 -4 4 H25 a4 4 0 0 1 -4 -4 V27 l-4 3 -7 -9 z" fill="${C.pink}"/>`+
+  `<path d="M45 44 l1.6 3.6 3.9 .4 -3 2.7 .9 3.9 -3.4 -2.1 -3.4 2.1 .9 -3.9 -3 -2.7 3.9 -.4 z" fill="${C.butter}" stroke-width="1.8"/>`+
+  face(30,37,6.5)},
+
+socks:{n:'Socks', s:
+  `<path d="M15 9 h18 v21 q0 6 6 9 l7 4 q8 5 2 12 -6 6 -13 2 l-13 -8 q-7 -4 -7 -13 z" fill="${C.butter}"/>`+
+  `<path d="M15 17 h18" stroke-width="2.6"/>`+
+  face(25,30,6)},
+
+hairbrush:{n:'Hairbrush', s:
+  `<path d="M20 7 v-4 M26 5 v-4 M32 4 v-4 M38 5 v-4 M44 7 v-4" stroke-width="2.4"/>`+
+  `<rect x="26" y="38" width="12" height="21" rx="6" fill="${C.tan}"/>`+
+  `<ellipse cx="32" cy="25" rx="17" ry="20" fill="${C.peach}"/>`+
+  face(32,26,6.5)},
+
+breakfast:{n:'Breakfast', s:
+  `<path d="M46 12 v18" stroke-width="3"/><ellipse cx="46" cy="10" rx="5" ry="7" fill="${C.grey}"/>`+
+  `<path d="M7 31 h50 v3 a25 22 0 0 1 -50 0 z" fill="${C.pink}"/>`+
+  `<ellipse cx="32" cy="31" rx="25" ry="6.5" fill="${C.cream}"/>`+
+  `<circle cx="24" cy="30" r="2.4" fill="${C.butter}" stroke-width="1.8"/>`+
+  `<circle cx="38" cy="32" r="2.4" fill="${C.butter}" stroke-width="1.8"/>`+
+  face(32,43,7)},
+
+backpack:{n:'Backpack', s:
+  `<path d="M23 19 v-4 a9 9 0 0 1 18 0 v4" fill="none"/>`+
+  `<rect x="10" y="17" width="44" height="39" rx="13" fill="${C.green}"/>`+
+  `<path d="M18 37 h28" stroke-width="2.6"/>`+
+  `<rect x="18" y="37" width="28" height="15" rx="7" fill="${C.mint}"/>`+
+  face(32,27,6.5)},
+
+door:{n:'Door', s:
+  `<rect x="13" y="6" width="38" height="52" rx="7" fill="${C.peach}"/>`+
+  `<circle cx="43" cy="36" r="3.2" fill="${C.butter}"/>`+
+  face(29,28,6.5)},
+
+/* ---------- bedtime ---------- */
+bathtub:{n:'Bathtub', s:
+  `<circle cx="16" cy="14" r="5" fill="${C.sky}"/>`+
+  `<circle cx="28" cy="8" r="3.6" fill="${C.sky}"/>`+
+  `<circle cx="40" cy="14" r="4.4" fill="${C.sky}"/>`+
+  `<path d="M14 52 v5 M50 52 v5"/>`+
+  `<path d="M5 28 h54 v10 a14 14 0 0 1 -14 14 H19 a14 14 0 0 1 -14 -14 z" fill="${C.white}"/>`+
+  `<path d="M7 33 h50" stroke-width="2.4"/>`+
+  face(32,42,7)},
+
+book:{n:'Book', s:
+  `<path d="M32 15 q-12 -7 -24 -1 v34 q12 -6 24 1 z" fill="${C.pink}"/>`+
+  `<path d="M32 15 q12 -7 24 -1 v34 q-12 -6 -24 1 z" fill="${C.sky}"/>`+
+  `<path d="M32 15 v34" stroke-width="2.6"/>`+
+  face(20,31,5.5,'happy')},
+
+teddy:{n:'Teddy bear', s:
+  `<circle cx="15" cy="16" r="8.5" fill="${C.tan}"/>`+
+  `<circle cx="49" cy="16" r="8.5" fill="${C.tan}"/>`+
+  `<circle cx="32" cy="34" r="20" fill="${C.peach}"/>`+
+  `<ellipse cx="32" cy="40" rx="10" ry="8" fill="${C.cream}"/>`+
+  `<circle cx="24" cy="30" r="2.6" fill="${O}" stroke="none"/>`+
+  `<circle cx="40" cy="30" r="2.6" fill="${O}" stroke="none"/>`+
+  `<circle cx="24.9" cy="29" r="1" fill="#fff" stroke="none"/>`+
+  `<circle cx="40.9" cy="29" r="1" fill="#fff" stroke="none"/>`+
+  `<ellipse cx="32" cy="37" rx="3.2" ry="2.5" fill="${O}" stroke="none"/>`+
+  `<path d="M28 42 q4 3.6 8 0" stroke-width="2.2"/>`+
+  `<ellipse cx="16" cy="36" rx="3.4" ry="2.3" fill="#ff8fbc" stroke="none" opacity=".6"/>`+
+  `<ellipse cx="48" cy="36" rx="3.4" ry="2.3" fill="#ff8fbc" stroke="none" opacity=".6"/>`},
+
+heart:{n:'Heart hug', s:
+  `<path d="M32 56 C9 39 7 24 17 17 c7 -5 15 1 15 7 0 -6 8 -12 15 -7 10 7 8 22 -15 39 z" fill="${C.rose}"/>`+
+  face(32,31,7,'happy')},
+
+moon:{n:'Moon', s:
+  `<path d="M50 8 l1.8 4.2 4.4 .4 -3.4 3 1 4.4 -3.8 -2.4 -3.8 2.4 1 -4.4 -3.4 -3 4.4 -.4 z" fill="${C.butter}" stroke-width="1.8"/>`+
+  `<circle cx="30" cy="35" r="21" fill="${C.butter}"/>`+
+  `<circle cx="18" cy="26" r="3.4" fill="${C.peach}" stroke-width="1.8"/>`+
+  `<circle cx="20" cy="45" r="2.6" fill="${C.peach}" stroke-width="1.8"/>`+
+  face(33,35,6.5,'sleep')},
+
+/* ---------- after school ---------- */
+shoes:{n:'Shoes', s:
+  `<path d="M7 43 q0 -11 10 -11 h7 l11 9 h16 a9 9 0 0 1 9 9 v5 H7 z" fill="${C.pink}"/>`+
+  `<path d="M7 51 h52" stroke-width="2.6"/>`+
+  `<path d="M33 41 l6 4 M38 38 l6 4" stroke-width="2.4"/>`+
+  face(18,40,5.5)},
+
+papers:{n:'Papers', s:
+  `<rect x="16" y="9" width="34" height="45" rx="5" fill="${C.white}" transform="rotate(6 32 32)"/>`+
+  `<rect x="13" y="7" width="34" height="45" rx="5" fill="${C.cream}"/>`+
+  `<path d="M19 15 h22 M19 21 h22" stroke-width="2.2"/>`+
+  face(30,35,6.5)},
+
+apple:{n:'Apple', s:
+  `<path d="M32 17 v-7" stroke-width="3"/>`+
+  `<path d="M33 13 q10 -7 13 1 -9 5 -13 -1 z" fill="${C.mint}"/>`+
+  `<ellipse cx="32" cy="37" rx="20" ry="18" fill="${C.rose}"/>`+
+  `<path d="M20 28 q4 -4 8 -3" stroke-width="2.2" opacity=".55"/>`+
+  face(32,38,7)},
+
+breakcloud:{n:'Rest cloud', s:
+  `<path d="M19 48 a13 13 0 0 1 -1 -26 a16 16 0 0 1 29 -2 a13 13 0 0 1 1 28 z" fill="${C.sky}"/>`+
+  face(32,33,7,'sleep')},
+
+pencil:{n:'Pencil', s:
+  `<rect x="23" y="15" width="18" height="30" rx="3" fill="${C.butter}"/>`+
+  `<rect x="23" y="6" width="18" height="10" rx="4" fill="${C.rose}"/>`+
+  `<path d="M23 45 h18 l-9 12 z" fill="${C.peach}"/>`+
+  `<path d="M28.5 52.5 h7 l-3.5 4.5 z" fill="${O}" stroke-width="1.6"/>`+
+  face(32,29,6)},
+
+cleanup:{n:'Tidy bin', s:
+  `<rect x="7" y="14" width="50" height="11" rx="5.5" fill="${C.green}"/>`+
+  `<path d="M12 25 h40 l-4 27 a8 8 0 0 1 -8 7 H24 a8 8 0 0 1 -8 -7 z" fill="${C.mint}"/>`+
+  face(32,40,7)},
+
+game:{n:'Game', s:
+  `<rect x="4" y="18" width="56" height="32" rx="15" fill="${C.lilac}"/>`+
+  `<path d="M13 41 h9 M17.5 36.5 v9" stroke-width="3"/>`+
+  `<circle cx="45" cy="37" r="2.8" fill="${C.rose}"/>`+
+  `<circle cx="52" cy="43" r="2.8" fill="${C.butter}"/>`+
+  face(32,29,7,'happy')},
+
+/* ---------- calm down ---------- */
+breathe:{n:'Breathe', s:
+  `<circle cx="53" cy="20" r="4.4" fill="${C.mint}"/>`+
+  `<circle cx="59" cy="12" r="2.8" fill="${C.mint}"/>`+
+  `<circle cx="28" cy="36" r="20" fill="${C.mint}"/>`+
+  face(27,35,7,'blow')},
+
+cup:{n:'Water', s:
+  `<path d="M15 17 h34 l-4 34 a8 8 0 0 1 -8 7 H27 a8 8 0 0 1 -8 -7 z" fill="${C.white}"/>`+
+  `<path d="M17.6 33 h28.8 l-2.6 18 a6 6 0 0 1 -6 5 H26.2 a6 6 0 0 1 -6 -5 z" fill="${C.sky}" stroke-width="2"/>`+
+  face(32,43,6.5)},
+
+headphones:{n:'Headphones', s:
+  `<circle cx="32" cy="38" r="17" fill="${C.butter}"/>`+
+  `<path d="M13 38 a19 19 0 0 1 38 0" fill="none"/>`+
+  `<rect x="6" y="31" width="13" height="17" rx="6.5" fill="${C.rose}"/>`+
+  `<rect x="45" y="31" width="13" height="17" rx="6.5" fill="${C.rose}"/>`+
+  `<path d="M52 20 v-9 h6" stroke-width="2.4"/><circle cx="50" cy="20" r="2.6" fill="${C.lilac}" stroke-width="2"/>`+
+  face(32,38,6.5,'happy')},
+
+walk:{n:'Walk', s:
+  `<circle cx="14" cy="15" r="2.7" fill="${C.mint}"/><circle cx="20.5" cy="12.5" r="2.7" fill="${C.mint}"/>`+
+  `<circle cx="27" cy="15" r="2.4" fill="${C.mint}"/>`+
+  `<ellipse cx="20" cy="28" rx="9" ry="12" fill="${C.mint}"/>`+
+  `<circle cx="37" cy="33" r="2.7" fill="${C.green}"/><circle cx="43.5" cy="30.5" r="2.7" fill="${C.green}"/>`+
+  `<circle cx="50" cy="33" r="2.4" fill="${C.green}"/>`+
+  `<ellipse cx="43" cy="46" rx="9" ry="12" fill="${C.green}"/>`+
+  face(43,46,5.5)},
+
+crayon:{n:'Crayon', s:
+  `<path d="M21 20 l11 -14 11 14 z" fill="${C.pink}"/>`+
+  `<rect x="21" y="20" width="22" height="38" rx="4" fill="${C.rose}"/>`+
+  `<rect x="21" y="24" width="22" height="6" fill="${C.white}" stroke-width="2"/>`+
+  face(32,44,6.5)},
+
+talk:{n:'Talk', s:
+  `<path d="M9 10 h46 a7 7 0 0 1 7 7 v20 a7 7 0 0 1 -7 7 H31 l-12 11 v-11 h-10 a7 7 0 0 1 -7 -7 V17 a7 7 0 0 1 7 -7 z" fill="${C.butter}"/>`+
+  face(32,27,7,'happy')},
+
+pad:{n:'Pad / wipe', s:
+  `<path d="M14 22 l-8 4 8 4 z" fill="${C.pink}"/>`+
+  `<path d="M50 22 l8 4 -8 4 z" fill="${C.pink}"/>`+
+  `<rect x="14" y="7" width="36" height="50" rx="15" fill="${C.white}"/>`+
+  `<path d="M32 12 v6" stroke-width="2.4" opacity=".45"/>`+
+  face(32,33,7)},
+
+spray:{n:'Deodorant', s:
+  `<circle cx="51" cy="9" r="2.6" fill="${C.sky}"/><circle cx="57" cy="15" r="1.9" fill="${C.sky}"/>`+
+  `<circle cx="52" cy="20" r="2.2" fill="${C.sky}"/>`+
+  `<rect x="24" y="3" width="16" height="11" rx="4" fill="${C.grey}"/>`+
+  `<rect x="17" y="14" width="30" height="45" rx="11" fill="${C.lilac}"/>`+
+  face(32,36,6.5)},
+
+lotion:{n:'Lotion', s:
+  `<path d="M34 8 h9 v7" stroke-width="3"/>`+
+  `<rect x="26" y="4" width="9" height="12" rx="3.5" fill="${C.grey}"/>`+
+  `<rect x="15" y="16" width="34" height="43" rx="12" fill="${C.peach}"/>`+
+  face(32,38,7)},
+
+music:{n:'Music', s:
+  `<circle cx="52" cy="15" r="3.2" fill="${C.rose}"/><path d="M55 15 V6 h5" stroke-width="2.4"/>`+
+  `<rect x="7" y="13" width="39" height="46" rx="11" fill="${C.lilac}"/>`+
+  `<circle cx="26.5" cy="46" r="7.5" fill="${C.white}" stroke-width="2.4"/>`+
+  face(26.5,29,6.5,'happy')},
+
+dance:{n:'Dance', s:
+  `<path d="M50 12 v-7 h5" stroke-width="2.4"/><circle cx="47" cy="13" r="3" fill="${C.rose}"/>`+
+  `<path d="M32 28 v15 M32 33 l-14 -10 M32 33 l14 -10 M32 43 l-10 14 M32 43 l10 14" stroke-width="4.2"/>`+
+  `<circle cx="32" cy="17" r="12" fill="${C.peach}"/>`+
+  face(32,17,5.5,'happy')},
+
+/* ---------- tabs + extras ---------- */
+sun:{n:'Sun', s:
+  `<path d="M32 3 v7 M32 54 v7 M3 32 h7 M54 32 h7 M11 11 l5 5 M48 48 l5 5 M53 11 l-5 5 M16 48 l-5 5" stroke-width="3.4"/>`+
+  `<circle cx="32" cy="32" r="17" fill="${C.butter}"/>`+
+  face(32,32,7,'happy')},
+
+star:{n:'Star', s:
+  `<path d="M32 4 40.6 22.4 61 25 46 39.4 49.8 59.4 32 49.8 14.2 59.4 18 39.4 3 25 23.4 22.4 z" fill="${C.butter}"/>`+
+  face(32,32,6.5)},
+
+rainbow:{n:'Rainbow', s:
+  `<path d="M6 46 a26 26 0 0 1 52 0" fill="none" stroke="${C.rose}" stroke-width="7"/>`+
+  `<path d="M14 46 a18 18 0 0 1 36 0" fill="none" stroke="${C.butter}" stroke-width="7"/>`+
+  `<path d="M22 46 a10 10 0 0 1 20 0" fill="none" stroke="${C.mint}" stroke-width="7"/>`+
+  `<circle cx="32" cy="46" r="2.6" fill="${O}" stroke="none"/>`},
+
+flower:{n:'Flower', s:
+  `<path d="M32 40 v18" stroke-width="3"/>`+
+  `<circle cx="32" cy="12" r="9" fill="${C.pink}"/><circle cx="12" cy="26" r="9" fill="${C.pink}"/>`+
+  `<circle cx="52" cy="26" r="9" fill="${C.pink}"/><circle cx="20" cy="46" r="9" fill="${C.pink}"/>`+
+  `<circle cx="44" cy="46" r="9" fill="${C.pink}"/>`+
+  `<circle cx="32" cy="30" r="12" fill="${C.butter}"/>`+
+  face(32,30,5,'happy')},
+
+medicine:{n:'Medicine', s:
+  `<rect x="18" y="6" width="28" height="9" rx="3" fill="${C.grey}"/>`+
+  `<rect x="14" y="15" width="36" height="43" rx="9" fill="${C.rose}"/>`+
+  `<path d="M32 30 v14 M25 37 h14" stroke-width="3.4" stroke="#fff"/>`+
+  face(32,24,6.5)},
+
+lunch:{n:'Lunchbox', s:
+  `<path d="M24 14 h16" stroke-width="3"/>`+
+  `<rect x="8" y="18" width="48" height="36" rx="10" fill="${C.blue}"/>`+
+  `<path d="M8 30 h48" stroke-width="2.6"/>`+
+  face(32,42,7,'happy')},
+
+tv:{n:'Screen time', s:
+  `<path d="M22 12 l8 8 M42 12 l-8 8" stroke-width="2.6"/>`+
+  `<rect x="6" y="20" width="52" height="34" rx="9" fill="${C.lilac}"/>`+
+  face(32,36,7,'happy')},
+
+timer:{n:'Timer', s:
+  `<path d="M32 8 v-4 M26 4 h12" stroke-width="3"/>`+
+  `<circle cx="32" cy="36" r="22" fill="${C.cream}"/>`+
+  `<path d="M32 36 v-11 M32 36 h8" stroke-width="3"/>`+
+  face(32,44,7)},
+
+hand:{n:'Ask for help', s:
+  `<path d="M18 40 V20 a5 5 0 0 1 10 0 v-4 a5 5 0 0 1 10 0 v4 a5 5 0 0 1 10 0 v18 a18 18 0 0 1 -36 2 z" fill="${C.peach}"/>`+
+  face(32,32,6)},
+
+bus:{n:'Bus', s:
+  `<rect x="5" y="14" width="54" height="32" rx="9" fill="${C.butter}"/>`+
+  `<rect x="10" y="19" width="16" height="12" rx="4" fill="${C.sky}"/>`+
+  `<circle cx="17" cy="50" r="6" fill="${C.grey}"/><circle cx="47" cy="50" r="6" fill="${C.grey}"/>`+
+  face(43,30,6,'happy')}
+};
+
+/* ==========================================================================
+   1. DEFAULT ROUTINES
+   Written as a task analysis: small, observable, single-action steps in the
+   order they naturally occur. Short phrasing for an emerging reader; the
+   picture carries the meaning. Nothing requires a spoken response.
+   ========================================================================== */
+/*<<<LISTS>>>*/
+const DEFAULT_LISTS = [
+  {
+    "id": "morning",
+    "name": "Morning",
+    "emoji": "sun",
+    "color": "morning",
+    "done": "You got ready all by yourself!",
+    "items": [
+      {
+        "icon": "bed",
+        "text": "Get out of bed"
+      },
+      {
+        "icon": "toilet",
+        "text": "Use the bathroom"
+      },
+      {
+        "icon": "medicine",
+        "text": "Take Medicine"
+      },
+      {
+        "icon": "bed",
+        "text": "Make Bed"
+      },
+      {
+        "icon": "pad",
+        "text": "Wipe and Pad"
+      },
+      {
+        "icon": "clothes",
+        "text": "Put on my clothes"
+      },
+      {
+        "icon": "toothbrush",
+        "text": "Brush my teeth"
+      },
+      {
+        "icon": "washface",
+        "text": "Wash my face"
+      },
+      {
+        "icon": "lotion",
+        "text": "Lotion Face"
+      },
+      {
+        "icon": "hairbrush",
+        "text": "Brush my hair"
+      },
+      {
+        "icon": "spray",
+        "text": "Deodorant / Perfume"
+      }
+    ]
+  },
+  {
+    "id": "bedtime",
+    "name": "Bedtime",
+    "emoji": "moon",
+    "color": "bedtime",
+    "done": "All ready for a good sleep.",
+    "items": [
+      {
+        "icon": "medicine",
+        "text": "Take Meds (nose spray)"
+      },
+      {
+        "icon": "cup",
+        "text": "Fill up Water"
+      },
+      {
+        "icon": "pajamas",
+        "text": "Put on Pajamas"
+      },
+      {
+        "icon": "pad",
+        "text": "Wipe & Night Pad"
+      },
+      {
+        "icon": "toothbrush",
+        "text": "Brush my teeth"
+      },
+      {
+        "icon": "soap",
+        "text": "Clean Face"
+      },
+      {
+        "icon": "hairbrush",
+        "text": "Brush Hair"
+      },
+      {
+        "icon": "toilet",
+        "text": "Use the bathroom"
+      },
+      {
+        "icon": "music",
+        "text": "Put on Music and Fan"
+      },
+      {
+        "icon": "heart",
+        "text": "Pray & Say Goodnight"
+      },
+      {
+        "icon": "moon",
+        "text": "Lights out"
+      },
+      {
+        "icon": "bed",
+        "text": "Get in Bed! Night Night!"
+      }
+    ]
+  },
+  {
+    "id": "after",
+    "name": "After School",
+    "emoji": "backpack",
+    "color": "after",
+    "done": "Your after-school jobs are all done!",
+    "items": [
+      {
+        "icon": "shoes",
+        "text": "Shoes off"
+      },
+      {
+        "icon": "backpack",
+        "text": "Hang up my backpack"
+      },
+      {
+        "icon": "toilet",
+        "text": "Use Bathroom"
+      },
+      {
+        "icon": "papers",
+        "text": "Give papers to Mom"
+      },
+      {
+        "icon": "cup",
+        "text": "Get a drink"
+      },
+      {
+        "icon": "apple",
+        "text": "Eat a snack"
+      },
+      {
+        "icon": "game",
+        "text": "Free time!"
+      }
+    ]
+  },
+  {
+    "id": "calm",
+    "name": "Calm Down",
+    "emoji": "heart",
+    "color": "calm",
+    "done": "You helped your body feel better.",
+    "items": [
+      {
+        "icon": "breathe",
+        "text": "Take deep breaths"
+      },
+      {
+        "icon": "teddy",
+        "text": "Squeeze my stuffie"
+      },
+      {
+        "icon": "cup",
+        "text": "Drink some water"
+      },
+      {
+        "icon": "headphones",
+        "text": "Quiet headphones"
+      },
+      {
+        "icon": "flower",
+        "text": "Sit in the garden"
+      },
+      {
+        "icon": "dance",
+        "text": "Dance it out!"
+      },
+      {
+        "icon": "crayon",
+        "text": "Color a picture"
+      },
+      {
+        "icon": "heart",
+        "text": "Ask for a hug"
+      },
+      {
+        "icon": "moon",
+        "text": "howl at the moon"
+      },
+      {
+        "icon": "talk",
+        "text": "Tell how I feel"
+      }
+    ]
+  }
+];
+/*<<<END-LISTS>>>*/
+
+/* Feeling scale — 5 points, faces first, words second. */
+const FEELINGS = [
+  {id:'great', em:'😄', label:'Great',  tone:'good'},
+  {id:'good',  em:'🙂', label:'Good',   tone:'good'},
+  {id:'okay',  em:'😐', label:'Okay',   tone:'mid'},
+  {id:'sad',   em:'😢', label:'Sad',    tone:'hard'},
+  {id:'mad',   em:'😠', label:'Mad',    tone:'hard'}
+];
+const FEEL = Object.fromEntries(FEELINGS.map(f=>[f.id,f]));
+
+/* ---- feeling faces, drawn in the same kawaii style ---- */
+function feelFace(id){
+  const F={great:C.butter, good:C.mint, okay:C.sky, sad:C.lilac, mad:C.pink}[id]||C.butter;
+  let inner;
+  if(id==='great') inner =
+    `<path d="M20 29 q4 -5 8 0 M36 29 q4 -5 8 0" stroke-width="2.8"/>`+
+    `<path d="M21 38 q11 13 22 0 z" fill="${O}" stroke="none"/>`+
+    `<path d="M21 38 q11 13 22 0" stroke-width="2.6"/>`;
+  else if(id==='good') inner =
+    `<circle cx="24" cy="29" r="2.8" fill="${O}" stroke="none"/><circle cx="40" cy="29" r="2.8" fill="${O}" stroke="none"/>`+
+    `<path d="M24 38 q8 7 16 0" stroke-width="2.8"/>`;
+  else if(id==='okay') inner =
+    `<circle cx="24" cy="30" r="2.8" fill="${O}" stroke="none"/><circle cx="40" cy="30" r="2.8" fill="${O}" stroke="none"/>`+
+    `<path d="M24 41 h16" stroke-width="2.8"/>`;
+  else if(id==='sad') inner =
+    `<circle cx="24" cy="29" r="2.8" fill="${O}" stroke="none"/><circle cx="40" cy="29" r="2.8" fill="${O}" stroke="none"/>`+
+    `<path d="M24 44 q8 -7 16 0" stroke-width="2.8"/>`+
+    `<path d="M22 34 q3.5 6.5 0 9 -3.5 -2.5 0 -9 z" fill="${C.blue}" stroke-width="1.6"/>`;
+  else inner =
+    `<path d="M17 22 l9 5 M47 22 l-9 5" stroke-width="2.8"/>`+
+    `<circle cx="24" cy="32" r="2.8" fill="${O}" stroke="none"/><circle cx="40" cy="32" r="2.8" fill="${O}" stroke="none"/>`+
+    `<path d="M24 45 q8 -7 16 0" stroke-width="2.8"/>`;
+  return `<circle cx="32" cy="32" r="26" fill="${F}"/>`+inner+
+    `<ellipse cx="14" cy="38" rx="4" ry="2.6" fill="#ff8fbc" stroke="none" opacity=".6"/>`+
+    `<ellipse cx="50" cy="38" rx="4" ry="2.6" fill="#ff8fbc" stroke="none" opacity=".6"/>`;
+}
+
+/* ---- render any icon: a drawn character if we have one, else the raw
+       text/emoji so custom steps typed by a grown-up still work ---- */
+function svgWrap(inner, cls){
+  return '<svg class="'+cls+'" viewBox="0 0 64 64" aria-hidden="true" focusable="false">'+
+    '<g fill="none" stroke="'+O+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">'+
+    inner+'</g></svg>';
+}
+function iconSVG(key, cls){
+  const d = ICONS[key];
+  return d ? svgWrap(d.s, cls)
+           : '<span class="'+cls+' emo" aria-hidden="true">'+esc(key)+'</span>';
+}
+function feelSVG(id, cls){ return svgWrap(feelFace(id), cls); }
+
+
+/* ==========================================================================
+   2. STATE + STORAGE
+   progress[personId][listId][YYYY-MM-DD] = { feeling, steps:{idx:"HH:MM"} }
+   Timestamps are captured silently on each tap — no extra response cost for
+   the child, but they give the weekly report duration and start-time data.
+   ========================================================================== */
+const KEY = 'dyDay.v2';
+
+function blankState(){
+  return {
+    people:[{id:'dy', name:'DY', lists:structuredClone(DEFAULT_LISTS)}],
+    current:'dy',
+    rate:0.9,
+    progress:{}
+  };
+}
+function load(){
+  let s=null;
+  try{ s = JSON.parse(localStorage.getItem(KEY)); }catch(e){}
+  if(!s || !s.people || !s.people.length) return blankState();
+  return Object.assign(blankState(), s);
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+let state = load();  // reassigned by the backup importer
+let activeList = state.people[0].lists[0].id;
+let weekOffset = 0;
+
+const $ = id => document.getElementById(id);
+const person   = () => state.people.find(p=>p.id===state.current) || state.people[0];
+const getList  = id => person().lists.find(l=>l.id===id) || person().lists[0];
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function ymd(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function today(){ return ymd(new Date()); }
+function hm(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+
+function dayRec(listId, date){
+  const p = state.progress;
+  p[state.current] = p[state.current] || {};
+  p[state.current][listId] = p[state.current][listId] || {};
+  p[state.current][listId][date] = p[state.current][listId][date] || {feeling:null, steps:{}};
+  return p[state.current][listId][date];
+}
+function peekDay(personId, listId, date){
+  return (((state.progress[personId]||{})[listId]||{})[date]) || null;
+}
+const rec  = () => dayRec(activeList, today());
+const doneIdx = () => Object.keys(rec().steps).map(Number);
+
+/* ==========================================================================
+   3. SPEECH
+   ========================================================================== */
+const synth = window.speechSynthesis || null;
+function speak(text, btn){
+  if(!synth) return;
+  try{
+    synth.cancel();
+    document.querySelectorAll('.speak.on').forEach(b=>b.classList.remove('on'));
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = state.rate; u.pitch = 1.15; u.lang = 'en-US';
+    if(btn){ btn.classList.add('on'); u.onend = u.onerror = ()=>btn.classList.remove('on'); }
+    synth.speak(u);
+  }catch(e){}
+}
+function speakAll(){
+  if(!synth) return;
+  try{
+    synth.cancel();
+    const l = getList(activeList);
+    [l.name+'.'].concat(l.items.map((it,i)=>(i+1)+'. '+it.text+'.')).forEach(t=>{
+      const u=new SpeechSynthesisUtterance(t);
+      u.rate=state.rate; u.pitch=1.15; u.lang='en-US'; synth.speak(u);
+    });
+  }catch(e){}
+}
+const quiet = () => { try{ synth && synth.cancel(); }catch(e){} };
+
+/* ==========================================================================
+   4. MASCOT — a little star whose face follows the progress
+   ========================================================================== */
+function drawMascot(pct){
+  const mood = pct>=1 ? 4 : pct>=.75 ? 3 : pct>=.4 ? 2 : pct>0 ? 1 : 0;
+  const eyes = [
+    '<path d="M36 46 h9 M55 46 h9" stroke="#4a2d52" stroke-width="4" stroke-linecap="round"/>',           // sleepy
+    '<circle cx="40" cy="46" r="4.2" fill="#4a2d52"/><circle cx="60" cy="46" r="4.2" fill="#4a2d52"/>',
+    '<circle cx="40" cy="46" r="4.6" fill="#4a2d52"/><circle cx="60" cy="46" r="4.6" fill="#4a2d52"/><circle cx="41.6" cy="44.4" r="1.6" fill="#fff"/><circle cx="61.6" cy="44.4" r="1.6" fill="#fff"/>',
+    '<path d="M35 48 q5 -7 10 0" stroke="#4a2d52" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M55 48 q5 -7 10 0" stroke="#4a2d52" stroke-width="4" fill="none" stroke-linecap="round"/>',
+    '<text x="40" y="51" font-size="15" text-anchor="middle">✨</text><text x="60" y="51" font-size="15" text-anchor="middle">✨</text>'
+  ][mood];
+  const mouth = [
+    '<path d="M45 60 h10" stroke="#4a2d52" stroke-width="4" stroke-linecap="round"/>',
+    '<path d="M44 59 q6 4 12 0" stroke="#4a2d52" stroke-width="4" fill="none" stroke-linecap="round"/>',
+    '<path d="M42 58 q8 7 16 0" stroke="#4a2d52" stroke-width="4" fill="none" stroke-linecap="round"/>',
+    '<path d="M41 57 q9 11 18 0 z" fill="#4a2d52"/>',
+    '<path d="M40 56 q10 13 20 0 z" fill="#4a2d52"/><path d="M46 63 q4 4 8 0" fill="#ff7fb0"/>'
+  ][mood];
+  $('mascot').innerHTML =
+    '<path d="M50 6 61 36 93 38 68 57 77 90 50 71 23 90 32 57 7 38 39 36 Z" '+
+      'fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="5" stroke-linejoin="round"/>'+
+    '<ellipse cx="31" cy="55" rx="6" ry="4" fill="#ff9ec4" opacity=".65"/>'+
+    '<ellipse cx="69" cy="55" rx="6" ry="4" fill="#ff9ec4" opacity=".65"/>'+
+    eyes + mouth;
+}
+
+/* ==========================================================================
+   5. RENDER — routine screen
+   ========================================================================== */
+function applyTheme(){
+  const l = getList(activeList), st = document.documentElement.style;
+  st.setProperty('--accent',      'var(--'+l.color+')');
+  st.setProperty('--accent-bg',   'var(--'+l.color+'-bg)');
+  st.setProperty('--accent-deep', 'var(--'+l.color+'-deep)');
+}
+
+function renderTabs(){
+  const nav = $('tabs'); nav.innerHTML='';
+  person().lists.forEach(l=>{
+    const r = peekDay(state.current, l.id, today());
+    const n = r ? Object.keys(r.steps).length : 0;
+    const b = document.createElement('button');
+    b.className='tab'; b.setAttribute('role','tab');
+    b.setAttribute('aria-selected', l.id===activeList ? 'true':'false');
+    b.innerHTML = iconSVG(l.emoji,'em')+'<span>'+esc(l.name)+'</span>'+
+                  '<span class="mini">'+n+' of '+l.items.length+'</span>';
+    b.onclick = ()=>{ activeList=l.id; quiet(); renderAll(); };
+    nav.appendChild(b);
+  });
+}
+
+function renderFeeling(){
+  const r = rec(), box = $('feelCard');
+  if(r.feeling && FEEL[r.feeling]){
+    const f = FEEL[r.feeling];
+    box.innerHTML = '';
+    const chip = document.createElement('button');
+    chip.className='feel-chip';
+    chip.innerHTML = feelSVG(f.id,'em')+
+                     '<span>I feel <b>'+f.label+'</b> today</span>'+
+                     '<span class="chg">tap to change</span>';
+    chip.onclick = ()=>{ r.feeling=null; save(); renderFeeling(); };
+    box.appendChild(chip);
+    return;
+  }
+  box.innerHTML = '<h2>How am I feeling? <span aria-hidden="true">💗</span></h2>'+
+                  '<p class="sub">Tap a face. There is no wrong answer.</p>';
+  const row = document.createElement('div'); row.className='faces';
+  FEELINGS.forEach(f=>{
+    const b=document.createElement('button');
+    b.className='face'; b.setAttribute('aria-pressed','false');
+    b.innerHTML=feelSVG(f.id,'em')+'<span>'+f.label+'</span>';
+    b.onclick=()=>{ r.feeling=f.id; save(); speak('I feel '+f.label); renderFeeling(); };
+    row.appendChild(b);
+  });
+  box.appendChild(row);
+}
+
+function renderList(){
+  const l = getList(activeList), r = rec(), ul = $('list');
+  ul.innerHTML='';
+  const nextUp = l.items.findIndex((_,k)=> r.steps[k]===undefined);
+  l.items.forEach((it,i)=>{
+    const isDone = r.steps[i] !== undefined;
+    const li = document.createElement('li');
+    li.className = 'item' + (isDone?' done':'') + (i===nextUp?' next':'');
+    li.dataset.i = i;
+
+    const b = document.createElement('button');
+    b.className='check-btn';
+    b.setAttribute('aria-pressed', isDone?'true':'false');
+    b.innerHTML = '<span class="num" aria-hidden="true">'+(i+1)+'</span>'+
+                  '<span class="icon">'+iconSVG(it.icon,'ic-svg')+'</span>'+
+                  '<span class="txt">'+esc(it.text)+'</span>'+
+                  '<span class="box" aria-hidden="true"></span>';
+    b.onclick = ()=>toggle(i);
+
+    const sp = document.createElement('button');
+    sp.className='speak'; sp.textContent='🔊';
+    sp.setAttribute('aria-label','Read out loud: '+it.text);
+    sp.onclick = e=>{ e.stopPropagation(); speak(it.text, sp); };
+
+    li.append(b, sp); ul.appendChild(li);
+  });
+
+  const total=l.items.length, n=Object.keys(r.steps).length, pct= total? n/total : 0;
+  $('progTitle').innerHTML = iconSVG(l.emoji,'tiny')+' '+esc(l.name);
+  $('progNum').textContent = n+' / '+total;
+  $('barFill').style.width = (pct*100)+'%';
+  $('stars').innerHTML = Array.from({length:5},(_,k)=>
+    '<span class="star'+(pct >= (k+1)/5 ? ' on':'')+'">⭐</span>').join('');
+  drawMascot(pct);
+  $('title').textContent = person().name + "'s Day";
+  $('whoName').textContent = person().name;
+}
+
+function renderAll(){ applyTheme(); renderTabs(); renderFeeling(); renderList(); }
+
+const PRAISE = ['Nice!','Yay!','Great!','Wow!','You got it!','Awesome!',
+                'Yes!','Super!','Way to go!','So good!','High five!','Brilliant!'];
+const SPARKS = ['\u2b50','\u2728','\ud83c\udf38','\ud83d\udc96','\ud83c\udf80',
+                '\ud83c\udf1f','\ud83d\udcab','\ud83e\uddc1','\ud83c\udf6c','\ud83c\udf08'];
+let lastPraise = -1;
+
+function toggle(i){
+  const r = rec(), l = getList(activeList);
+  const adding = r.steps[i] === undefined;
+  if(adding) r.steps[i] = hm();        // silent timestamp — free data, zero taps
+  else       delete r.steps[i];
+  save(); renderList(); renderTabs();
+  if(!adding) return;
+  speak(l.items[i].text);
+  celebrateStep(i);
+  if(Object.keys(r.steps).length === l.items.length && l.items.length) setTimeout(yay, 950);
+}
+
+/* A full little show for every single check: the card squashes, the character
+   hops, the checkmark stamps on, sparkles burst out and a praise word floats up.
+   Unchecking stays quiet on purpose — undoing should never feel rewarding. */
+function celebrateStep(i){
+  const li  = document.querySelector('li.item[data-i="'+i+'"]');
+  const mas = $('mascot'), bar = $('barFill');
+  if(li){  li.classList.add('cheer');   setTimeout(()=>li.classList.remove('cheer'), 820); }
+  if(mas){ mas.classList.add('cheer');  setTimeout(()=>mas.classList.remove('cheer'), 850); }
+  if(bar){ bar.classList.add('pulse');  setTimeout(()=>bar.classList.remove('pulse'), 750); }
+
+  if(!li || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const fx = $('fx'); if(!fx) return;
+  const box = li.querySelector('.box') || li;
+  const b = box.getBoundingClientRect(), lr = li.getBoundingClientRect();
+  const cx = b.left + b.width/2, cy = b.top + b.height/2;
+
+  const ring = document.createElement('div');
+  ring.className = 'ring';
+  ring.style.left = cx+'px'; ring.style.top = cy+'px';
+  fx.appendChild(ring); setTimeout(()=>ring.remove(), 780);
+
+  const N = 11;
+  for(let k=0;k<N;k++){
+    const s = document.createElement('div');
+    s.className = 'spark';
+    s.textContent = SPARKS[(Math.random()*SPARKS.length)|0];
+    const ang = (Math.PI*2*k)/N + Math.random()*0.55;
+    const dist = 52 + Math.random()*48;
+    s.style.left = cx+'px'; s.style.top = cy+'px';
+    s.style.setProperty('--dx', Math.cos(ang)*dist+'px');
+    s.style.setProperty('--dy', (Math.sin(ang)*dist - 16)+'px');
+    s.style.animationDelay = (Math.random()*0.09)+'s';
+    fx.appendChild(s); setTimeout(()=>s.remove(), 1180);
+  }
+
+  let p; do{ p = (Math.random()*PRAISE.length)|0; } while(p===lastPraise && PRAISE.length>1);
+  lastPraise = p;
+  const w = document.createElement('div');
+  w.className = 'praise'; w.textContent = PRAISE[p];
+  w.style.left = (lr.left + lr.width*0.60)+'px';
+  w.style.top  = (lr.top  + lr.height*0.42)+'px';
+  fx.appendChild(w); setTimeout(()=>w.remove(), 1280);
+}
+
+function yay(){
+  const l = getList(activeList);
+  $('yayMsg').textContent = l.done;
+  $('yay').classList.add('show');
+  $('yayClose').focus();
+  setTimeout(()=>speak('You did it! '+l.done), 300);
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches) confetti();
+}
+function confetti(){
+  const bits=['⭐','🌸','💖','✨','🎀','🍬','🌈','🧁'];
+  for(let i=0;i<48;i++){
+    const c=document.createElement('div');
+    c.className='confetti'; c.textContent=bits[i%bits.length];
+    c.style.left=Math.random()*98+'vw';
+    c.style.animation='fall '+(2.4+Math.random()*2)+'s linear '+(Math.random()*.7)+'s forwards';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),5600);
+  }
+}
+
+/* ==========================================================================
+   6. WEEKLY REPORT
+   ========================================================================== */
+function weekStart(offset){
+  const d=new Date(); d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - ((d.getDay()+6)%7) + offset*7);   // Monday
+  return d;
+}
+function weekDates(offset){
+  const s=weekStart(offset);
+  return Array.from({length:7},(_,i)=>{ const d=new Date(s); d.setDate(s.getDate()+i); return d; });
+}
+const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmt = d => MON[d.getMonth()]+' '+d.getDate();
+function toMin(t){ const [h,m]=t.split(':').map(Number); return h*60+m; }
+function fromMin(v){
+  v=Math.round(v); const h=Math.floor(v/60)%24, m=v%60;
+  const ap = h<12?'AM':'PM', hh = h%12===0?12:h%12;
+  return hh+':'+String(m).padStart(2,'0')+' '+ap;
+}
+
+function analyseWeek(listId, offset){
+  const l = person().lists.find(x=>x.id===listId);
+  const dates = weekDates(offset);
+  const days = dates.map(d=>{
+    const r = peekDay(state.current, listId, ymd(d));
+    if(!r) return {date:d, has:false, n:0, pct:0, feeling:null, times:[]};
+    const idx = Object.keys(r.steps).map(Number);
+    const times = Object.values(r.steps).map(toMin).sort((a,b)=>a-b);
+    return {date:d, has:idx.length>0 || !!r.feeling, idx, n:idx.length,
+            pct: l.items.length ? idx.length/l.items.length : 0,
+            feeling:r.feeling, times};
+  });
+  const active = days.filter(d=>d.n>0);
+  const perStep = l.items.map((it,i)=>{
+    const hit = active.filter(d=>d.idx.includes(i)).length;
+    return {item:it, hit, of:active.length, pct: active.length? hit/active.length : 0};
+  });
+  const durs = active.filter(d=>d.times.length>1).map(d=>d.times[d.times.length-1]-d.times[0]);
+  const starts = active.filter(d=>d.times.length).map(d=>d.times[0]);
+  const avg = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+
+  const tone = t => active.filter(d=>d.feeling && FEEL[d.feeling] && FEEL[d.feeling].tone===t);
+  const good = tone('good'), hard = tone('hard');
+
+  return {
+    list:l, dates, days, active, perStep,
+    avgPct: avg(active.map(d=>d.pct)),
+    avgDur: avg(durs), avgStart: avg(starts),
+    fullDays: active.filter(d=>d.pct>=1).length,
+    goodPct: avg(good.map(d=>d.pct)), goodN: good.length,
+    hardPct: avg(hard.map(d=>d.pct)), hardN: hard.length,
+    focus: perStep.filter(s=>s.of>=2 && s.pct<0.6)
+  };
+}
+
+function renderReport(){
+  const listId = $('rptList').value || activeList;
+  const a = analyseWeek(listId, weekOffset);
+  const s = a.dates[0], e = a.dates[6];
+  $('wkRange').textContent = fmt(s)+' – '+fmt(e)+', '+e.getFullYear();
+  $('printHead').innerHTML =
+    '<h2 style="margin:0 0 4px">'+esc(person().name)+' — '+esc(a.list.name)+' Routine</h2>'+
+    '<div style="font-weight:700">Week of '+fmt(s)+' – '+fmt(e)+', '+e.getFullYear()+
+    ' &nbsp;•&nbsp; Self-monitored picture checklist &nbsp;•&nbsp; Printed '+fmt(new Date())+', '+new Date().getFullYear()+'</div>';
+
+  const pc = v => v==null ? '—' : Math.round(v*100)+'%';
+  let h='';
+
+  if(!a.active.length){
+    h = '<div class="callout"><b>No data recorded this week.</b><br>'+
+        'Checkmarks appear here automatically as '+esc(person().name)+' uses the '+esc(a.list.name)+
+        ' checklist. Use the ← arrow to look at an earlier week.</div>';
+    $('rptBody').innerHTML=h; return;
+  }
+
+  /* KPI row */
+  h += '<div class="kpis">'+
+    '<div class="kpi"><div class="v">'+pc(a.avgPct)+'</div><div class="l">Average steps completed</div></div>'+
+    '<div class="kpi"><div class="v">'+a.fullDays+' of '+a.active.length+'</div><div class="l">Days finished the whole routine</div></div>'+
+    '<div class="kpi"><div class="v">'+(a.avgDur==null?'—':Math.round(a.avgDur)+' min')+'</div><div class="l">Average time to finish</div></div>'+
+    '<div class="kpi"><div class="v">'+(a.avgStart==null?'—':fromMin(a.avgStart))+'</div><div class="l">Average start time</div></div>'+
+  '</div>';
+
+  /* chart */
+  h += '<h3 style="border:0;padding:0;margin:0 0 8px">Daily completion</h3><div class="chart">';
+  a.days.forEach(d=>{
+    h += '<div class="col'+(d.n?'':' empty')+'">'+
+         '<span class="cv">'+(d.n?Math.round(d.pct*100)+'%':'')+'</span>'+
+         '<div class="cb" style="height:'+(d.n? Math.max(4, d.pct*130) : 4)+'px"></div></div>';
+  });
+  h += '</div><div class="axis">';
+  a.days.forEach((d,i)=>{
+    const f = d.feeling && FEEL[d.feeling];
+    h += '<div><span class="mood">'+(f?feelSVG(f.id,'mood-svg'):'<span style="opacity:.3">·</span>')+'</span>'+
+         DOW[i]+'<span class="dow">'+(d.date.getMonth()+1)+'/'+d.date.getDate()+'</span></div>';
+  });
+  h += '</div>';
+
+  /* per-step table */
+  h += '<h3 style="border:0;padding:0;margin:4px 0 8px">Step-by-step consistency</h3>'+
+       '<table class="steps"><thead><tr><th>Step</th><th style="text-align:center">'+
+       DOW.map(d=>d[0]).join(' ')+'</th><th style="text-align:right">Done</th></tr></thead><tbody>';
+  a.perStep.forEach((sp,i)=>{
+    const dots = a.days.map(d=> !d.n ? '<span style="opacity:.25">·</span>'
+                                     : (d.idx.includes(i) ? '●' : '<span style="opacity:.3">○</span>')).join(' ');
+    const isFocus = a.focus.includes(sp);
+    h += '<tr'+(isFocus?' class="focus"':'')+'><td>'+
+         iconSVG(sp.item.icon,'row-svg')+' '+esc(sp.item.text)+'</td>'+
+         '<td class="dots">'+dots+'</td>'+
+         '<td class="pct">'+sp.hit+'/'+sp.of+'</td></tr>';
+  });
+  h += '</tbody></table>'+
+       '<p class="legend">● completed &nbsp; ○ not completed &nbsp; · no data that day &nbsp;&nbsp; '+
+       '⚠️ marks steps completed on fewer than 60% of active days.</p>';
+
+  /* interpretation */
+  h += '<div class="callout"><b>What this suggests</b><ul>';
+  if(a.focus.length){
+    h += '<li><b>Target these steps first:</b> '+a.focus.map(f=>esc(f.item.text)).join(', ')+
+         '. A step that is consistently skipped usually means the step is too large, the materials '+
+         'are not set up in advance, or the natural prompt for it is missing — not that '+esc(person().name)+
+         ' is refusing. Try breaking one of these into two smaller steps or moving it earlier in the chain.</li>';
+  }else{
+    h += '<li>No step fell below 60% this week. Every step in the chain is being completed reliably — '+
+         'this is the point to begin thinning reinforcement or fading a prompt.</li>';
+  }
+  if(a.goodN>=2 && a.hardN>=2 && a.goodPct!=null && a.hardPct!=null){
+    const gap = Math.round((a.goodPct-a.hardPct)*100);
+    h += '<li><b>Mood and completion:</b> average completion was '+pc(a.goodPct)+' on days starting '+
+         '<b>Great/Good</b> ('+a.goodN+' days) versus '+pc(a.hardPct)+' on days starting <b>Sad/Mad</b> ('+a.hardN+' days)'+
+         (Math.abs(gap)>=15
+           ? ' — a '+Math.abs(gap)+'-point difference. How the morning starts appears to be a strong setting event. '+
+             'Look upstream at sleep, wake-up method, and the first two minutes of the day.'
+           : ' — a small difference, so mood does not appear to be driving completion this week.')+'</li>';
+  }else{
+    h += '<li><b>Mood and completion:</b> not enough feeling data yet to compare good-mood and hard-mood days. '+
+         'Two or more of each is needed before the comparison means anything.</li>';
+  }
+  if(a.avgDur!=null){
+    h += '<li><b>Duration:</b> the routine took about '+Math.round(a.avgDur)+' minutes on average'+
+         (a.avgStart!=null? ', typically starting around '+fromMin(a.avgStart) : '')+
+         '. Duration trending down across weeks is often the clearest early sign of growing fluency, even before completion rates change.</li>';
+  }
+  h += '<li><b>Days with data:</b> '+a.active.length+' of 7. Sparse weeks make every number less reliable; '+
+       'aim for at least 4 recorded days before drawing conclusions.</li>';
+  h += '</ul></div>';
+
+  h += '<p class="legend" style="margin-top:16px">Data is child self-monitored and unverified by an observer. '+
+       'It reflects what was marked complete on this device, not direct observation, and should be read alongside '+
+       'caregiver report rather than in place of it.</p>';
+
+  $('rptBody').innerHTML = h;
+}
+
+function openReport(){
+  quiet();
+  $('rptList').innerHTML = person().lists.map(l=>
+    '<option value="'+l.id+'">'+esc(l.name)+'</option>').join('');
+  $('rptList').value = activeList;
+  weekOffset = 0;
+  renderReport();
+  $('report').classList.add('show');
+}
+
+/* ==========================================================================
+   7. SETTINGS
+   ========================================================================== */
+let editId = null;
+
+function openSettings(){
+  quiet();
+  editId = activeList;
+  refreshPeople(); refreshListSelect(); renderRows();
+  $('rate').value = state.rate;
+  $('rateVal').textContent = Number(state.rate).toFixed(2);
+  $('settings').classList.add('show');
+}
+function refreshPeople(){
+  $('stuSel').innerHTML = state.people.map(p=>
+    '<option value="'+p.id+'">'+esc(p.name)+'</option>').join('');
+  $('stuSel').value = state.current;
+}
+function refreshListSelect(){
+  $('editSel').innerHTML = person().lists.map(l=>
+    '<option value="'+l.id+'">'+esc(l.name)+'</option>').join('');
+  if(!person().lists.some(l=>l.id===editId)) editId = person().lists[0].id;
+  $('editSel').value = editId;
+  const l = person().lists.find(x=>x.id===editId);
+  $('listEmoji').innerHTML = iconSVG(l.emoji,'pick-svg'); $('listName').value = l.name;
+}
+function renderRows(){
+  const l = person().lists.find(x=>x.id===editId);
+  const box = $('rows'); box.innerHTML='';
+  if(!l) return;
+  l.items.forEach((it,i)=>{
+    const row=document.createElement('div'); row.className='erow';
+    row.innerHTML =
+      '<button class="icbtn" aria-label="Change the character for step '+(i+1)+'">'+iconSVG(it.icon,'pick-svg')+'</button>'+
+      '<input type="text" class="tx" value="'+esc(it.text)+'" aria-label="Words for step '+(i+1)+'">'+
+      '<button class="mini" aria-label="Move step '+(i+1)+' up">↑</button>'+
+      '<button class="mini" aria-label="Move step '+(i+1)+' down">↓</button>'+
+      '<button class="mini danger" aria-label="Delete step '+(i+1)+'">✕</button>';
+    const [ic,tx,up,dn,del] = row.querySelectorAll('input,button');
+    ic.onclick = ()=>openPicker(it.icon, v=>{
+      it.icon = v; save(); renderRows(); renderList();
+    });
+    tx.oninput = ()=>{ it.text = tx.value; save(); renderList(); };
+    up.onclick  = ()=>{ if(i>0){ l.items.splice(i-1,0,l.items.splice(i,1)[0]); save(); renderRows(); renderList(); } };
+    dn.onclick  = ()=>{ if(i<l.items.length-1){ l.items.splice(i+1,0,l.items.splice(i,1)[0]); save(); renderRows(); renderList(); } };
+    del.onclick = ()=>{ l.items.splice(i,1); save(); renderRows(); renderAll(); };
+    box.appendChild(row);
+  });
+}
+
+/* ---- character picker ---- */
+let pickCB = null;
+function openPicker(current, cb){
+  pickCB = cb;
+  $('pickCustom').value = ICONS[current] ? '' : current;
+  const g = $('pgrid'); g.innerHTML = '';
+  Object.keys(ICONS).forEach(k=>{
+    const b = document.createElement('button');
+    b.className = 'pcell';
+    b.setAttribute('aria-pressed', k===current ? 'true':'false');
+    b.innerHTML = iconSVG(k,'pick-svg') + '<span>' + esc(ICONS[k].n) + '</span>';
+    b.onclick = ()=>choose(k);
+    g.appendChild(b);
+  });
+  $('picker').classList.add('show');
+}
+function choose(v){
+  $('picker').classList.remove('show');
+  if(pickCB) pickCB(v);
+  pickCB = null;
+}
+$('pickClose').onclick = ()=>{ $('picker').classList.remove('show'); pickCB=null; };
+$('pickUse').onclick   = ()=>{ const v=$('pickCustom').value.trim(); if(v) choose(v); };
+$('picker').onclick    = e=>{ if(e.target.id==='picker'){ e.target.classList.remove('show'); pickCB=null; } };
+
+/* ==========================================================================
+   8. WIRING
+   ========================================================================== */
+$('readAll').onclick   = speakAll;
+$('startOver').onclick = ()=>{ quiet(); const r=rec(); r.steps={}; save(); renderAll(); };
+$('yayClose').onclick  = ()=>{ quiet(); $('yay').classList.remove('show'); };
+$('yay').onclick       = e=>{ if(e.target.id==='yay'){ quiet(); e.target.classList.remove('show'); } };
+
+$('rptBtn').onclick    = openReport;
+$('rptClose').onclick  = ()=>$('report').classList.remove('show');
+$('rptClose2').onclick = ()=>$('report').classList.remove('show');
+$('rptPrint').onclick  = ()=>window.print();
+$('wkPrev').onclick    = ()=>{ weekOffset--; renderReport(); };
+$('wkNext').onclick    = ()=>{ if(weekOffset<0){ weekOffset++; renderReport(); } };
+$('rptList').onchange  = renderReport;
+
+$('setBtn').onclick    = openSettings;
+$('whoBtn').onclick    = openSettings;
+$('setClose').onclick  = ()=>$('settings').classList.remove('show');
+$('setSave').onclick   = ()=>{ save(); $('settings').classList.remove('show'); renderAll(); };
+
+$('stuSel').onchange = e=>{
+  state.current = e.target.value; save();
+  activeList = person().lists[0].id;
+  refreshListSelect(); renderRows(); renderAll();
+};
+$('stuAdd').onclick = ()=>{
+  const name = prompt('Name or initials for the new person:');
+  if(!name || !name.trim()) return;
+  const id = 'p'+Date.now();
+  state.people.push({id, name:name.trim(), lists:structuredClone(DEFAULT_LISTS)});
+  state.current = id; activeList = 'morning';
+  save(); refreshPeople(); refreshListSelect(); renderRows(); renderAll();
+};
+$('stuDel').onclick = ()=>{
+  if(state.people.length<2){ alert('Keep at least one person.'); return; }
+  if(!confirm('Remove '+person().name+' and all of their saved data? This cannot be undone.')) return;
+  delete state.progress[state.current];
+  state.people = state.people.filter(p=>p.id!==state.current);
+  state.current = state.people[0].id;
+  activeList = person().lists[0].id;
+  save(); refreshPeople(); refreshListSelect(); renderRows(); renderAll();
+};
+
+$('editSel').onchange = e=>{ editId = e.target.value; refreshListSelect(); renderRows(); };
+$('listEmoji').onclick = ()=>{
+  const l = person().lists.find(x=>x.id===editId);
+  openPicker(l.emoji, v=>{ l.emoji = v; save(); refreshListSelect(); renderAll(); });
+};
+$('listName').oninput  = e=>{ person().lists.find(l=>l.id===editId).name  = e.target.value||'Routine'; save(); renderAll(); };
+$('addItem').onclick = ()=>{
+  person().lists.find(l=>l.id===editId).items.push({icon:'star', text:'New step'});
+  save(); renderRows(); renderAll();
+};
+$('listAdd').onclick = ()=>{
+  const name = prompt('Name for the new routine (for example: Weekend, Chores, Getting Ready for Church):');
+  if(!name || !name.trim()) return;
+  const palettes=['morning','bedtime','after','calm'];
+  const id='l'+Date.now();
+  person().lists.push({id, name:name.trim(), emoji:'star',
+    color:palettes[person().lists.length % palettes.length],
+    done:'You finished!', items:[{icon:'star', text:'First step'}]});
+  editId=id; save(); refreshListSelect(); renderRows(); renderAll();
+};
+$('listDel').onclick = ()=>{
+  if(person().lists.length<2){ alert('Keep at least one routine.'); return; }
+  const l = person().lists.find(x=>x.id===editId);
+  if(!confirm('Delete the "'+l.name+'" routine and its saved data?')) return;
+  if(state.progress[state.current]) delete state.progress[state.current][editId];
+  person().lists = person().lists.filter(x=>x.id!==editId);
+  editId = person().lists[0].id;
+  if(!person().lists.some(x=>x.id===activeList)) activeList = person().lists[0].id;
+  save(); refreshListSelect(); renderRows(); renderAll();
+};
+
+$('rate').oninput = e=>{
+  state.rate = parseFloat(e.target.value);
+  $('rateVal').textContent = state.rate.toFixed(2); save();
+};
+$('testVoice').onclick = ()=>speak('Time to brush my teeth.');
+
+function downloadFile(text, name, type){
+  const blob = new Blob([text], {type:type||'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+}
+
+/* Bake the routines currently on this device into a fresh copy of this page, so
+   that uploading it makes them the starting point on every other device too. */
+$('publishBtn').onclick = async ()=>{
+  // split so these literals do not themselves appear in the file and confuse the search
+  const A='/*<<<'+'LISTS>>>*/', B='/*<<<'+'END-LISTS>>>*/';
+  let src=null;
+  try{
+    const r = await fetch(location.href, {cache:'no-store'});
+    if(r.ok) src = await r.text();
+  }catch(e){}
+  if(!src || src.indexOf(A)<0 || src.indexOf(B)<0){
+    alert('I could not read this page’s own file.\n\n'+
+          'This usually means the page was opened straight from your hard drive. Open your '+
+          'published Netlify link instead, make your edits there, then press this button again.');
+    return;
+  }
+  const json = JSON.stringify(person().lists, null, 2)
+                 .replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
+  const out = src.slice(0, src.indexOf(A)) +
+              A + '\nconst DEFAULT_LISTS = ' + json + ';\n' +
+              src.slice(src.indexOf(B));
+  downloadFile(out, 'index.html', 'text/html');
+  alert('Saved index.html to your Downloads.\n\nNext: put it in a folder by itself, then drag that '+
+        'folder onto your Netlify site’s Deploys tab. Your new routines go live in about a minute.');
+};
+
+$('importBtn').onclick = ()=>$('importFile').click();
+$('importFile').onchange = e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{
+    try{
+      const d = JSON.parse(rd.result);
+      if(!d || !d.people || !d.people.length) throw new Error('not a backup');
+      if(!confirm('Replace everything on this device with the backup? This cannot be undone.')) return;
+      state = Object.assign(blankState(), d);
+      if(!state.people.some(p=>p.id===state.current)) state.current = state.people[0].id;
+      activeList = person().lists[0].id;
+      save(); refreshPeople(); refreshListSelect(); renderRows(); renderAll();
+      alert('Backup restored.');
+    }catch(err){ alert('That file could not be read as a backup.'); }
+  };
+  rd.readAsText(f);
+  e.target.value = '';
+};
+
+$('exportBtn').onclick = ()=>{
+  downloadFile(JSON.stringify(state,null,2),
+    person().name.replace(/\s+/g,'-')+'-checklist-backup-'+today()+'.json',
+    'application/json');
+};
+$('restoreBtn').onclick = ()=>{
+  if(!confirm('Replace this person’s routines with the ones built into this published page? '+
+              'Edits made on this device will be lost. Saved history is kept.')) return;
+  person().lists = structuredClone(DEFAULT_LISTS);
+  editId = 'morning'; activeList = 'morning';
+  save(); refreshListSelect(); renderRows(); renderAll();
+};
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){
+    quiet();
+    ['yay','report','settings','picker'].forEach(id=>$(id).classList.remove('show'));
+  }
+});
+
+/* go */
+renderAll();
+</script>
+</body>
+</html>
